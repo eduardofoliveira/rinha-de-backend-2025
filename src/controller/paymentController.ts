@@ -103,9 +103,9 @@ const create = async (req: Request, res: Response): Promise<any> => {
     requestsPending--
   })
 
-  if (requestsPending > 15) {
-    await new Promise(resolve => setTimeout(resolve, 1250)) // Simulate a delay for the transaction to be processed
-  }
+  // if (requestsPending > 15) {
+  //   await new Promise(resolve => setTimeout(resolve, 1250)) // Simulate a delay for the transaction to be processed
+  // }
 
   res.status(201).json({ message: 'payment processed successfully' })
 }
