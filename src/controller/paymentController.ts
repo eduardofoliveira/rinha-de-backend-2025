@@ -10,6 +10,10 @@ const create = async (req: Request, res: Response): Promise<any> => {
 }
 
 const purge = async (req: Request, res: Response): Promise<any> => {
+  console.log(req.body)
+  console.log(req.headers)
+  console.log(req.query)
+
   const result = await Promise.all([
     api.post('/admin/purge-payments', req.body, {
       headers: {
