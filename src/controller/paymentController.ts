@@ -10,11 +10,17 @@ const create = async (req: Request, res: Response): Promise<any> => {
 }
 
 const purge = async (req: Request, res: Response): Promise<any> => {
-  const headers = req.headers
-
   const result = await Promise.all([
-    api.post('/admin/purge-payments', req.body, { headers }),
-    api_fallback.post('/admin/purge-payments', req.body, { headers }),
+    api.post('/admin/purge-payments', req.body, {
+      headers: {
+        'X-Rinha-Token': 123
+      }
+    }),
+    api_fallback.post('/admin/purge-payments', req.body, {
+      headers: {
+        'X-Rinha-Token': 123
+      }
+    }),
   ])
 
   return res.status(200).json(result)
