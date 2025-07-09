@@ -7,14 +7,12 @@ type PaymentItem = { amount: number; data: string }
 let totalRequestsDefault = 0
 let totalAmountCentsDefault = 0
 let defaultList: PaymentItem[] = []
-// let totalFeeDefault = 0
-// let feePerTransactionCentsDefault = 0.01
 
 let totalRequestsFallback = 0
 let totalAmountCentsFallback = 0
 let fallbackList: PaymentItem[] = []
-// let totalFeeFallback = 0
-// let feePerTransactionCentsFallback = 0.01
+
+let requestsPending = 0
 
 const ExecuteTransactionFallback = (amount: number, correlationId: string, requestedAt: string) => {
   return new Promise(async (resolve, reject) => {
@@ -72,23 +70,8 @@ const ExecuteTransaction = (amount: number, correlationId: string, requestedAt: 
 const summary = async (req: Request, res: Response): Promise<any> => {
   const { from, to } = req.query
 
-  // if (from !== '2000-01-01T00:00:00' && from !== '2900-01-01T00:00:00') {
-  //   return res.status(200).json({
-  //     default: {
-  //       totalRequests: 0,
-  //       totalAmount: 0,
-  //     },
-  //     fallback: {
-  //       totalRequests: 0,
-  //       totalAmount: 0,
-  //     }
-  //   })
-  // }
-
   return res.status(200).json({
     default: {
-      // totalRequests: totalRequestsDefault,
-      // totalAmount: parseFloat((totalAmountCentsDefault / 100).toFixed(2)),
       totalRequests: defaultList.filter(item => {
         const itemDate = new Date(item.data)
         return itemDate >= new Date(from as string) && itemDate <= new Date(to as string)
@@ -99,8 +82,6 @@ const summary = async (req: Request, res: Response): Promise<any> => {
       }).reduce((acc, item) => acc + item.amount, 0)).toFixed(2)),
     },
     fallback: {
-      // totalRequests: totalRequestsFallback,
-      // totalAmount: parseFloat((totalAmountCentsFallback / 100).toFixed(2)),
       totalRequests: fallbackList.filter(item => {
         const itemDate = new Date(item.data)
         return itemDate >= new Date(from as string) && itemDate <= new Date(to as string)
@@ -114,10 +95,17 @@ const summary = async (req: Request, res: Response): Promise<any> => {
 }
 
 const create = async (req: Request, res: Response): Promise<any> => {
+  requestsPending++
+
   const requestedAt = new Date().toISOString()
   const { correlationId, amount } = req.body
   ExecuteTransaction(amount, correlationId, requestedAt)
-  await new Promise(resolve => setTimeout(resolve, 1000)) // Simulate a delay for the transaction to be processed
+
+  if (requestsPending > 15) {
+    await new Promise(resolve => setTimeout(resolve, 1000)) // Simulate a delay for the transaction to be processed
+  }
+
+  requestsPending--
   res.status(201).json({ message: 'payment processed successfully' })
 }
 
@@ -144,7 +132,6 @@ const purge = async (req: Request, res: Response): Promise<any> => {
   totalRequestsFallback = 0
   totalAmountCentsFallback = 0
   fallbackList = []
-
 
   return res.status(200).json(data)
 }
