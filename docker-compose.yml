@@ -1,7 +1,7 @@
 services:
   app:
     build: .
-    container_name: rinha-backend-2025
+    container_name: eduardofoliveira/rinha-backend-2025
     ports:
       - "9999:9999"
     deploy:
