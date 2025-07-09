@@ -2,17 +2,17 @@ import type { Request, Response } from 'express'
 
 import { api_fallback, api } from '../service/api'
 
-let totalRequestsDefault = 0
-let totalAmountCentsDefault = 0
 type PaymentItem = { amount: number; data: string }
 
-const defaultList: PaymentItem[] = []
+let totalRequestsDefault = 0
+let totalAmountCentsDefault = 0
+let defaultList: PaymentItem[] = []
 // let totalFeeDefault = 0
 // let feePerTransactionCentsDefault = 0.01
 
 let totalRequestsFallback = 0
 let totalAmountCentsFallback = 0
-const fallbackList: PaymentItem[] = []
+let fallbackList: PaymentItem[] = []
 // let totalFeeFallback = 0
 // let feePerTransactionCentsFallback = 0.01
 
@@ -137,9 +137,12 @@ const purge = async (req: Request, res: Response): Promise<any> => {
 
   totalRequestsDefault = 0
   totalAmountCentsDefault = 0
+  defaultList = []
 
   totalRequestsFallback = 0
   totalAmountCentsFallback = 0
+  fallbackList = []
+
 
   return res.status(200).json(data)
 }
