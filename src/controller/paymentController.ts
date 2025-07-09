@@ -5,16 +5,16 @@ import api, { api_fallback } from '../service/api'
 let totalRequests = 0
 let totalAmountCents = 0
 let totalFee = 0
-let feePerTransaction = 0.01
+let feePerTransactionCents = 0.01
 
 const summary = async (req: Request, res: Response): Promise<any> => {
   const { from, to } = req.query
 
   return res.status(200).json({
     totalRequests,
-    totalAmount: parseFloat((totalAmountCents / 100).toFixed(2)),
-    totalFee,
-    feePerTransaction
+    totalAmount: parseFloat((totalAmountCents / 100).toFixed(2)).toFixed(2),
+    totalFee: parseFloat((totalFee / 100).toFixed(2)).toFixed(2),
+    feePerTransaction: feePerTransactionCents,
   })
 }
 
@@ -30,7 +30,8 @@ const create = async (req: Request, res: Response): Promise<any> => {
 
   totalRequests++
   totalAmountCents += Math.round(Number(amount) * 100)
-  totalFee += feePerTransaction
+  totalFee += Math.round(Number(feePerTransactionCents) * 100)
+
 
   return res.status(201).json(data)
 }
