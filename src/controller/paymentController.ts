@@ -10,9 +10,11 @@ const create = async (req: Request, res: Response): Promise<any> => {
 }
 
 const purge = async (req: Request, res: Response): Promise<any> => {
+  const headers = req.headers
+
   const result = await Promise.all([
-    api.post('/purge-payments', req.body),
-    api_fallback.post('/purge-payments', req.body),
+    api.post('/purge-payments', req.body, { headers }),
+    api_fallback.post('/purge-payments', req.body, { headers }),
   ])
 
   return res.status(200).json(result)
