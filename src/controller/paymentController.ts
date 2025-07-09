@@ -12,8 +12,8 @@ const summary = async (req: Request, res: Response): Promise<any> => {
 
   return res.status(200).json({
     totalRequests,
-    totalAmount: parseFloat((totalAmountCents / 100).toFixed(2)).toFixed(2),
-    totalFee: parseFloat((totalFee / 100).toFixed(2)).toFixed(2),
+    totalAmount: parseFloat((totalAmountCents / 100).toFixed(2)),
+    totalFee: parseFloat((totalFee / 100).toFixed(2)),
     feePerTransaction: feePerTransactionCents,
   })
 }
