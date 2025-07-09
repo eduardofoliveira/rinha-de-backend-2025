@@ -114,10 +114,11 @@ const summary = async (req: Request, res: Response): Promise<any> => {
 }
 
 const create = async (req: Request, res: Response): Promise<any> => {
-  res.status(201).json({ message: 'payment processed successfully' })
   const requestedAt = new Date().toISOString()
   const { correlationId, amount } = req.body
   ExecuteTransaction(amount, correlationId, requestedAt)
+  await new Promise(resolve => setTimeout(resolve, 250)) // Simulate a delay for the transaction to be processed
+  res.status(201).json({ message: 'payment processed successfully' })
 }
 
 const purge = async (req: Request, res: Response): Promise<any> => {
