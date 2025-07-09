@@ -19,6 +19,7 @@ const summary = async (req: Request, res: Response): Promise<any> => {
 }
 
 const create = async (req: Request, res: Response): Promise<any> => {
+  res.status(201).json({ message: 'payment processed successfully' })
   const { correlationId, amount } = req.body
 
   const { data } = await api.post('/payments', req.body)
@@ -31,9 +32,6 @@ const create = async (req: Request, res: Response): Promise<any> => {
   totalRequests++
   totalAmountCents += Math.round(Number(amount) * 100)
   totalFee += Math.round(Number(feePerTransactionCents) * 100)
-
-
-  return res.status(201).json(data)
 }
 
 const purge = async (req: Request, res: Response): Promise<any> => {
