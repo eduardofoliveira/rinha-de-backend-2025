@@ -1,31 +1,70 @@
 import type { Request, Response } from 'express'
 
-import api, { api_fallback } from '../service/api'
+import { api_fallback, api } from '../service/api'
 
-let totalRequests = 0
-let totalAmountCents = 0
-let totalFee = 0
-let feePerTransactionCents = 0.01
+let totalRequestsDefault = 0
+let totalAmountCentsDefault = 0
+let totalFeeDefault = 0
+let feePerTransactionCentsDefault = 0.01
+
+let totalRequestsFallback = 0
+let totalAmountCentsFallback = 0
+let totalFeeFallback = 0
+let feePerTransactionCentsFallback = 0.01
+
+const ExecuteTransactionFallback = (amount: number, correlationId: string) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      await api_fallback.post('/payments', {
+        amount,
+        correlationId,
+      })
+      totalRequestsFallback++
+      totalAmountCentsFallback += Math.round(Number(amount) * 100)
+      totalFeeFallback += Math.round(Number(feePerTransactionCentsFallback) * 100)
+      return resolve({ status: 'success', server: 'fallback' })
+    } catch (error) {
+      return ExecuteTransaction(amount, correlationId)
+    }
+  })
+}
+
+const ExecuteTransaction = (amount: number, correlationId: string) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      await api.post('/payments', {
+        amount,
+        correlationId,
+      })
+      totalRequestsDefault++
+      totalAmountCentsDefault += Math.round(Number(amount) * 100)
+      totalFeeDefault += Math.round(Number(feePerTransactionCentsDefault) * 100)
+      return resolve({ status: 'success', server: 'default' })
+    } catch (error) {
+      return ExecuteTransactionFallback(amount, correlationId)
+    }
+  })
+}
 
 const summary = async (req: Request, res: Response): Promise<any> => {
   const { from, to } = req.query
 
   return res.status(200).json({
-    totalRequests,
-    totalAmount: parseFloat((totalAmountCents / 100).toFixed(2)),
-    totalFee: parseFloat((totalFee / 100).toFixed(2)),
-    feePerTransaction: feePerTransactionCents,
+    // totalRequests,
+    // totalAmount: parseFloat((totalAmountCents / 100).toFixed(2)),
+    // totalFee: parseFloat((totalFee / 100).toFixed(2)),
+    // feePerTransaction: feePerTransactionCents,
     default: {
-      totalRequests,
-      totalAmount: parseFloat((totalAmountCents / 100).toFixed(2)),
-      totalFee: parseFloat((totalFee / 100).toFixed(2)),
-      feePerTransaction: feePerTransactionCents,
+      totalRequests: totalRequestsDefault,
+      totalAmount: parseFloat((totalAmountCentsDefault / 100).toFixed(2)),
+      totalFee: parseFloat((totalFeeDefault / 100).toFixed(2)),
+      feePerTransaction: feePerTransactionCentsDefault,
     },
     fallback: {
-      totalRequests,
-      totalAmount: parseFloat((totalAmountCents / 100).toFixed(2)),
-      totalFee: parseFloat((totalFee / 100).toFixed(2)),
-      feePerTransaction: feePerTransactionCents,
+      totalRequestsFallback,
+      totalAmount: parseFloat((totalAmountCentsFallback / 100).toFixed(2)),
+      totalFee: parseFloat((totalFeeFallback / 100).toFixed(2)),
+      feePerTransaction: feePerTransactionCentsFallback,
     }
   })
 }
@@ -34,16 +73,7 @@ const create = async (req: Request, res: Response): Promise<any> => {
   res.status(201).json({ message: 'payment processed successfully' })
   const { correlationId, amount } = req.body
 
-  const { data } = await api.post('/payments', req.body)
-
-  console.log(`Payment created with correlationId: ${correlationId}, amount: ${amount}`)
-  console.log({
-    data
-  })
-
-  totalRequests++
-  totalAmountCents += Math.round(Number(amount) * 100)
-  totalFee += Math.round(Number(feePerTransactionCents) * 100)
+  ExecuteTransaction(amount, correlationId)
 }
 
 const purge = async (req: Request, res: Response): Promise<any> => {
