@@ -12,7 +12,7 @@ const summary = async (req: Request, res: Response): Promise<any> => {
 
   return res.status(200).json({
     totalRequests,
-    totalAmount: (totalAmountCents / 100).toFixed(2),
+    totalAmount: parseFloat((totalAmountCents / 100).toFixed(2)),
     totalFee,
     feePerTransaction
   })
