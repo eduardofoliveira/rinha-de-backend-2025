@@ -30,6 +30,7 @@ const create = async (req: Request, res: Response): Promise<any> => {
 
   totalRequests++
   totalAmountCents += Math.round(Number(amount) * 100)
+  totalFee += feePerTransaction
 
   return res.status(201).json(data)
 }
