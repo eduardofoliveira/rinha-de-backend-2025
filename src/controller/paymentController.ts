@@ -23,6 +23,8 @@ const purge = async (req: Request, res: Response): Promise<any> => {
     }),
   ])
 
+  console.log(result)
+
   return res.status(200).json(result)
 }
 
