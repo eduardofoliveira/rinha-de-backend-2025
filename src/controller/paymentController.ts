@@ -70,10 +70,10 @@ const summary = async (req: Request, res: Response): Promise<any> => {
 }
 
 const create = async (req: Request, res: Response): Promise<any> => {
-  res.status(201).json({ message: 'payment processed successfully' })
   const { correlationId, amount } = req.body
 
-  ExecuteTransaction(amount, correlationId)
+  const result = await ExecuteTransaction(amount, correlationId)
+  res.status(201).json(result)
 }
 
 const purge = async (req: Request, res: Response): Promise<any> => {
