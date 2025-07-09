@@ -15,6 +15,12 @@ const summary = async (req: Request, res: Response): Promise<any> => {
     totalAmount: parseFloat((totalAmountCents / 100).toFixed(2)),
     totalFee: parseFloat((totalFee / 100).toFixed(2)),
     feePerTransaction: feePerTransactionCents,
+    default: {
+      totalRequests,
+      totalAmount: parseFloat((totalAmountCents / 100).toFixed(2)),
+      totalFee: parseFloat((totalFee / 100).toFixed(2)),
+      feePerTransaction: feePerTransactionCents,
+    }
   })
 }
 
