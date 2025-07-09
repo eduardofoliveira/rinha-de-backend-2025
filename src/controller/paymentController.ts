@@ -99,13 +99,14 @@ const create = async (req: Request, res: Response): Promise<any> => {
 
   const requestedAt = new Date().toISOString()
   const { correlationId, amount } = req.body
-  ExecuteTransaction(amount, correlationId, requestedAt)
+  ExecuteTransaction(amount, correlationId, requestedAt).then(() => {
+    requestsPending--
+  })
 
   if (requestsPending > 15) {
     await new Promise(resolve => setTimeout(resolve, 1000)) // Simulate a delay for the transaction to be processed
   }
 
-  requestsPending--
   res.status(201).json({ message: 'payment processed successfully' })
 }
 
