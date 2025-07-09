@@ -61,7 +61,7 @@ const summary = async (req: Request, res: Response): Promise<any> => {
       feePerTransaction: feePerTransactionCentsDefault,
     },
     fallback: {
-      totalRequestsFallback,
+      totalRequests: totalRequestsFallback,
       totalAmount: parseFloat((totalAmountCentsFallback / 100).toFixed(2)),
       totalFee: parseFloat((totalFeeFallback / 100).toFixed(2)),
       feePerTransaction: feePerTransactionCentsFallback,
