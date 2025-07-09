@@ -42,7 +42,7 @@ const ExecuteTransaction = (amount: number, correlationId: string, retryCount = 
       totalAmountCentsDefault += Math.round(Number(amount) * 100)
       return resolve({ status: 'success', server: 'default' })
     } catch (error) {
-      if (retryCount < 10) {
+      if (retryCount < 15) {
         setTimeout(() => {
           ExecuteTransaction(amount, correlationId, retryCount + 1).then(resolve).catch(reject)
         }, 1000)
