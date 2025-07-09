@@ -1,0 +1,12 @@
+services:
+  app:
+    build: .
+    container_name: rinha-backend-2025
+    ports:
+      - "9999:9999"
+    environment:
+      - NODE_ENV=production
+      - PORT=9999
+    volumes:
+      - .:/usr/src/app
+    command: npm start
