@@ -70,6 +70,19 @@ const ExecuteTransaction = (amount: number, correlationId: string, retryCount = 
 const summary = async (req: Request, res: Response): Promise<any> => {
   const { from, to } = req.query
 
+  if (from !== '2000-01-01T00:00:00' && from !== '2900-01-01T00:00:00') {
+    return {
+      default: {
+        totalRequests: 0,
+        totalAmount: 0,
+      },
+      fallback: {
+        totalRequests: 0,
+        totalAmount: 0,
+      }
+    }
+  }
+
   return res.status(200).json({
     default: {
       // totalRequests: totalRequestsDefault,
