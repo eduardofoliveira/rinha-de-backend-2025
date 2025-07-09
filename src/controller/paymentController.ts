@@ -16,30 +16,31 @@ const fallbackList: PaymentItem[] = []
 // let totalFeeFallback = 0
 // let feePerTransactionCentsFallback = 0.01
 
-const ExecuteTransactionFallback = (amount: number, correlationId: string) => {
+const ExecuteTransactionFallback = (amount: number, correlationId: string, requestedAt: string) => {
   return new Promise(async (resolve, reject) => {
     try {
       await api_fallback.post('/payments', {
         amount,
         correlationId,
+        requestedAt
       })
       totalRequestsFallback++
       totalAmountCentsFallback += Math.round(Number(amount) * 100)
       fallbackList.push({
         amount,
-        data: new Date().toISOString(),
+        data: requestedAt,
       })
       // totalFeeFallback += Math.round(Number(feePerTransactionCentsFallback) * 100)
       return resolve({ status: 'success', server: 'fallback' })
     } catch (error) {
       setTimeout(() => {
-        return ExecuteTransaction(amount, correlationId)
+        return ExecuteTransaction(amount, correlationId, requestedAt)
       }, 1000) // Simulate a delay before retrying
     }
   })
 }
 
-const ExecuteTransaction = (amount: number, correlationId: string, retryCount = 0): Promise<any> => {
+const ExecuteTransaction = (amount: number, correlationId: string, requestedAt: string, retryCount = 0): Promise<any> => {
   return new Promise(async (resolve, reject) => {
     try {
       await api.post('/payments', {
@@ -50,17 +51,17 @@ const ExecuteTransaction = (amount: number, correlationId: string, retryCount = 
       totalAmountCentsDefault += Math.round(Number(amount) * 100)
       defaultList.push({
         amount,
-        data: new Date().toISOString(),
+        data: requestedAt,
       })
       return resolve({ status: 'success', server: 'default' })
     } catch (error) {
       if (retryCount < 15) {
         setTimeout(() => {
-          ExecuteTransaction(amount, correlationId, retryCount + 1).then(resolve).catch(reject)
+          ExecuteTransaction(amount, correlationId, requestedAt, retryCount + 1).then(resolve).catch(reject)
         }, 1000)
       } else {
         setTimeout(() => {
-          ExecuteTransactionFallback(amount, correlationId).then(resolve).catch(reject)
+          ExecuteTransactionFallback(amount, correlationId, requestedAt).then(resolve).catch(reject)
         }, 1000)
       }
     }
@@ -70,18 +71,18 @@ const ExecuteTransaction = (amount: number, correlationId: string, retryCount = 
 const summary = async (req: Request, res: Response): Promise<any> => {
   const { from, to } = req.query
 
-  if (from !== '2000-01-01T00:00:00' && from !== '2900-01-01T00:00:00') {
-    return res.status(200).json({
-      default: {
-        totalRequests: 0,
-        totalAmount: 0,
-      },
-      fallback: {
-        totalRequests: 0,
-        totalAmount: 0,
-      }
-    })
-  }
+  // if (from !== '2000-01-01T00:00:00' && from !== '2900-01-01T00:00:00') {
+  //   return res.status(200).json({
+  //     default: {
+  //       totalRequests: 0,
+  //       totalAmount: 0,
+  //     },
+  //     fallback: {
+  //       totalRequests: 0,
+  //       totalAmount: 0,
+  //     }
+  //   })
+  // }
 
   return res.status(200).json({
     default: {
@@ -113,8 +114,9 @@ const summary = async (req: Request, res: Response): Promise<any> => {
 
 const create = async (req: Request, res: Response): Promise<any> => {
   res.status(201).json({ message: 'payment processed successfully' })
+  const requestedAt = new Date().toISOString()
   const { correlationId, amount } = req.body
-  ExecuteTransaction(amount, correlationId)
+  ExecuteTransaction(amount, correlationId, requestedAt)
 }
 
 const purge = async (req: Request, res: Response): Promise<any> => {
