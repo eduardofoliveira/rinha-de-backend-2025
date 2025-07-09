@@ -22,14 +22,18 @@ api.interceptors.response.use(
     const config = error.config
     config.__retryCount = config.__retryCount || 0
 
-    if (error.response && error.response.status === 503 && config.__retryCount < MAX_RETRIES) {
+    if (error.response && error.response.status !== 200 && config.__retryCount < MAX_RETRIES) {
       config.__retryCount += 1
       try {
         const fallbackResponse = await api_fallback.request({
           ...config,
           baseURL: url_fallback,
         })
-        return fallbackResponse
+        return {
+          data: fallbackResponse.data,
+          status: fallbackResponse.status,
+          server: 'fallback',
+        }
       } catch (fallbackError) {
         if (fallbackError instanceof AxiosError) {
           return Promise.reject(fallbackError)
@@ -46,14 +50,18 @@ api_fallback.interceptors.response.use(
     const config = error.config
     config.__retryCount = config.__retryCount || 0
 
-    if (error.response && error.response.status === 503 && config.__retryCount < MAX_RETRIES) {
+    if (error.response && error.response.status !== 200 && config.__retryCount < MAX_RETRIES) {
       config.__retryCount += 1
       try {
         const fallbackResponse = await api.request({
           ...config,
           baseURL: url_fallback,
         })
-        return fallbackResponse
+        return {
+          data: fallbackResponse.data,
+          status: fallbackResponse.status,
+          server: 'default',
+        }
       } catch (fallbackError) {
         if (fallbackError instanceof AxiosError) {
           return Promise.reject(fallbackError)
