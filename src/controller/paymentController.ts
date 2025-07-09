@@ -125,6 +125,8 @@ const purge = async (req: Request, res: Response): Promise<any> => {
 
   const data = result.map(r => r.data)
 
+  requestsPending = 0
+
   totalRequestsDefault = 0
   totalAmountCentsDefault = 0
   defaultList = []
