@@ -4,13 +4,13 @@ import { api_fallback, api } from '../service/api'
 
 let totalRequestsDefault = 0
 let totalAmountCentsDefault = 0
-let totalFeeDefault = 0
-let feePerTransactionCentsDefault = 0.01
+// let totalFeeDefault = 0
+// let feePerTransactionCentsDefault = 0.01
 
 let totalRequestsFallback = 0
 let totalAmountCentsFallback = 0
-let totalFeeFallback = 0
-let feePerTransactionCentsFallback = 0.01
+// let totalFeeFallback = 0
+// let feePerTransactionCentsFallback = 0.01
 
 const ExecuteTransactionFallback = (amount: number, correlationId: string) => {
   return new Promise(async (resolve, reject) => {
@@ -21,7 +21,7 @@ const ExecuteTransactionFallback = (amount: number, correlationId: string) => {
       })
       totalRequestsFallback++
       totalAmountCentsFallback += Math.round(Number(amount) * 100)
-      totalFeeFallback += Math.round(Number(feePerTransactionCentsFallback) * 100)
+      // totalFeeFallback += Math.round(Number(feePerTransactionCentsFallback) * 100)
       return resolve({ status: 'success', server: 'fallback' })
     } catch (error) {
       setTimeout(() => {
@@ -40,7 +40,7 @@ const ExecuteTransaction = (amount: number, correlationId: string) => {
       })
       totalRequestsDefault++
       totalAmountCentsDefault += Math.round(Number(amount) * 100)
-      totalFeeDefault += Math.round(Number(feePerTransactionCentsDefault) * 100)
+      // totalFeeDefault += Math.round(Number(feePerTransactionCentsDefault) * 100)
       return resolve({ status: 'success', server: 'default' })
     } catch (error) {
       setTimeout(() => {
@@ -61,14 +61,14 @@ const summary = async (req: Request, res: Response): Promise<any> => {
     default: {
       totalRequests: totalRequestsDefault,
       totalAmount: parseFloat((totalAmountCentsDefault / 100).toFixed(2)),
-      totalFee: parseFloat((totalFeeDefault / 100).toFixed(2)),
-      feePerTransaction: feePerTransactionCentsDefault,
+      // totalFee: parseFloat((totalFeeDefault / 100).toFixed(2)),
+      // feePerTransaction: feePerTransactionCentsDefault,
     },
     fallback: {
       totalRequests: totalRequestsFallback,
       totalAmount: parseFloat((totalAmountCentsFallback / 100).toFixed(2)),
-      totalFee: parseFloat((totalFeeFallback / 100).toFixed(2)),
-      feePerTransaction: feePerTransactionCentsFallback,
+      // totalFee: parseFloat((totalFeeFallback / 100).toFixed(2)),
+      // feePerTransaction: feePerTransactionCentsFallback,
     }
   })
 }
