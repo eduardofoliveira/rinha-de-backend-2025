@@ -71,7 +71,7 @@ const summary = async (req: Request, res: Response): Promise<any> => {
   const { from, to } = req.query
 
   if (from !== '2000-01-01T00:00:00' && from !== '2900-01-01T00:00:00') {
-    return {
+    return res.status(200).json({
       default: {
         totalRequests: 0,
         totalAmount: 0,
@@ -80,7 +80,7 @@ const summary = async (req: Request, res: Response): Promise<any> => {
         totalRequests: 0,
         totalAmount: 0,
       }
-    }
+    })
   }
 
   return res.status(200).json({
