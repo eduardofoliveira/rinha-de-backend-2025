@@ -31,7 +31,7 @@ const ExecuteTransactionFallback = (amount: number, correlationId: string) => {
   })
 }
 
-const ExecuteTransaction = (amount: number, correlationId: string) => {
+const ExecuteTransaction = (amount: number, correlationId: string, retryCount = 0): Promise<any> => {
   return new Promise(async (resolve, reject) => {
     try {
       await api.post('/payments', {
@@ -40,12 +40,17 @@ const ExecuteTransaction = (amount: number, correlationId: string) => {
       })
       totalRequestsDefault++
       totalAmountCentsDefault += Math.round(Number(amount) * 100)
-      // totalFeeDefault += Math.round(Number(feePerTransactionCentsDefault) * 100)
       return resolve({ status: 'success', server: 'default' })
     } catch (error) {
-      setTimeout(() => {
-        return ExecuteTransactionFallback(amount, correlationId)
-      }, 1000) // Simulate a delay before retrying
+      if (retryCount < 10) {
+        setTimeout(() => {
+          ExecuteTransaction(amount, correlationId, retryCount + 1).then(resolve).catch(reject)
+        }, 1000)
+      } else {
+        setTimeout(() => {
+          ExecuteTransactionFallback(amount, correlationId).then(resolve).catch(reject)
+        }, 1000)
+      }
     }
   })
 }
