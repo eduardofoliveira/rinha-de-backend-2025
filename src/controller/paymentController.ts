@@ -24,7 +24,9 @@ const ExecuteTransactionFallback = (amount: number, correlationId: string) => {
       totalFeeFallback += Math.round(Number(feePerTransactionCentsFallback) * 100)
       return resolve({ status: 'success', server: 'fallback' })
     } catch (error) {
-      return ExecuteTransaction(amount, correlationId)
+      setTimeout(() => {
+        return ExecuteTransaction(amount, correlationId)
+      }, 1000) // Simulate a delay before retrying
     }
   })
 }
@@ -41,7 +43,9 @@ const ExecuteTransaction = (amount: number, correlationId: string) => {
       totalFeeDefault += Math.round(Number(feePerTransactionCentsDefault) * 100)
       return resolve({ status: 'success', server: 'default' })
     } catch (error) {
-      return ExecuteTransactionFallback(amount, correlationId)
+      setTimeout(() => {
+        return ExecuteTransactionFallback(amount, correlationId)
+      }, 1000) // Simulate a delay before retrying
     }
   })
 }
@@ -70,10 +74,9 @@ const summary = async (req: Request, res: Response): Promise<any> => {
 }
 
 const create = async (req: Request, res: Response): Promise<any> => {
+  res.status(201).json({ message: 'payment processed successfully' })
   const { correlationId, amount } = req.body
-
-  const result = await ExecuteTransaction(amount, correlationId)
-  res.status(201).json(result)
+  ExecuteTransaction(amount, correlationId)
 }
 
 const purge = async (req: Request, res: Response): Promise<any> => {
