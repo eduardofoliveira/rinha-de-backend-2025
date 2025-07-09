@@ -46,6 +46,7 @@ const ExecuteTransaction = (amount: number, correlationId: string, requestedAt: 
       await api.post('/payments', {
         amount,
         correlationId,
+        requestedAt
       })
       totalRequestsDefault++
       totalAmountCentsDefault += Math.round(Number(amount) * 100)
