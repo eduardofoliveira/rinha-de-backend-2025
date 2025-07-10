@@ -54,7 +54,7 @@ const ExecuteTransaction = (amount: number, correlationId: string, requestedAt: 
       })
       return resolve({ status: 'success', server: 'default' })
     } catch (error) {
-      if (retryCount < 15) {
+      if (retryCount < 3) {
         setTimeout(() => {
           ExecuteTransaction(amount, correlationId, requestedAt, retryCount + 1).then(resolve).catch(reject)
         }, 1000)
