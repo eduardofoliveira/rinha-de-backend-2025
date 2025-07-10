@@ -17,6 +17,7 @@ services:
     command: npm start
     networks:
       - backend
+      - payment-processor
 
   app2:
     build: .
@@ -36,6 +37,7 @@ services:
     command: npm start
     networks:
       - backend
+      - payment-processor
 
   nginx:
     image: nginx:latest
