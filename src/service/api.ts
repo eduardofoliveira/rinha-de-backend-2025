@@ -3,8 +3,8 @@ import axios, { AxiosError, AxiosInstance } from 'axios'
 // const url_default = 'http://payment-processor-default:8080'
 // const url_fallback = 'http://payment-processor-fallback:8080'
 
-const url_default = process.env.PAYMENT_PROCESSOR_URL_DEFAULT || 'http://localhost:8001'
-const url_fallback = process.env.PAYMENT_PROCESSOR_URL_FALLBACK || 'http://localhost:8002'
+const url_default = process.env.PAYMENT_PROCESSOR_URL_DEFAULT || 'http://payment-processor-default:8080'
+const url_fallback = process.env.PAYMENT_PROCESSOR_URL_FALLBACK || 'http://payment-processor-fallback:8080'
 
 const api = axios.create({
   baseURL: url_default,

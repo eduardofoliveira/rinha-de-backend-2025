@@ -6,7 +6,7 @@ import cors from 'cors'
 
 import paymentRoutes from './routes/paymentRoutes'
 
-const port = process.env.PORT || 9999
+const port = process.env.PORT || 3000
 const app = express()
 
 app.use(cors())
