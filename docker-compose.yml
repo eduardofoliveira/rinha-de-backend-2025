@@ -1,7 +1,7 @@
 services:
   app1:
     build: .
-    container_name: eduardofoliveira/rinha-backend-2025-app1
+    container_name: rinha-backend-2025-app1
     deploy:
       resources:
         limits:
@@ -18,7 +18,7 @@ services:
 
   app2:
     build: .
-    container_name: eduardofoliveira/rinha-backend-2025-app2
+    container_name: rinha-backend-2025-app2
     deploy:
       resources:
         limits:
