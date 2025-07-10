@@ -8,8 +8,6 @@ services:
           cpus: "1.5"
           memory: "350MB"
     env_file: .env
-    depends_on:
-      - nginx
     environment:
       - NODE_ENV=production
       - PORT=3000
@@ -31,8 +29,6 @@ services:
           cpus: "1.5"
           memory: "350MB"
     env_file: .env
-    depends_on:
-      - nginx
     environment:
       - NODE_ENV=production
       - PORT=3000
