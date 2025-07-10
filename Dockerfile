@@ -6,6 +6,7 @@ COPY package*.json ./
 COPY tsconfig.json ./
 RUN npm install
 COPY /src ./src
+COPY .env ./.env
 
 RUN npm run build
 
