@@ -33,7 +33,7 @@ const ExecuteTransactionFallback = (amount: number, correlationId: string, reque
     } catch (error) {
       setTimeout(() => {
         return ExecuteTransaction(amount, correlationId, requestedAt)
-      }, 1000) // Simulate a delay before retrying
+      }, 250) // Simulate a delay before retrying
     }
   })
 }
@@ -56,12 +56,12 @@ const ExecuteTransaction = (amount: number, correlationId: string, requestedAt: 
     } catch (error) {
       if (retryCount < 3) {
         setTimeout(() => {
-          ExecuteTransaction(amount, correlationId, requestedAt, retryCount + 1).then(resolve).catch(reject)
-        }, 1000)
+          return ExecuteTransaction(amount, correlationId, requestedAt, retryCount + 1).then(resolve).catch(reject)
+        }, 250)
       } else {
         setTimeout(() => {
-          ExecuteTransactionFallback(amount, correlationId, requestedAt).then(resolve).catch(reject)
-        }, 1000)
+          return ExecuteTransactionFallback(amount, correlationId, requestedAt).then(resolve).catch(reject)
+        }, 250)
       }
     }
   })
